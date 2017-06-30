@@ -1,0 +1,13 @@
+{
+    "name": "undermind/gitoliteauditor",
+    "description": "Parse gitolite.conf for user-friendly view",
+    "homepage": "https://github.com/undermind/gitoliteauditor",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Undermind",
+            "email": "mixey@pisem.net"
+        }
+    ]
+}
