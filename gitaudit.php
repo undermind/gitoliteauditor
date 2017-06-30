@@ -1,23 +1,31 @@
 #!/usr/bin/php
 <?php
 
+/*
 function Determinator($string)
 {
-  /*
 # Regex for repo name []repo foo/bar]
 REPO_NAME_REGEX = /\Arepo (.*)\n\z/
 # Regex for project description [foo/bar "owner" = "Description of repo"], owner may be empty
 REPO_INFO_REGEX = /\A([^ ]*) "([^"]*)" = "(.*)"\n\z/
 # Regex for access rights [  RW+ = username1 username2]
 REPO_ACCESS_REGEX = /\A  ([^ ]*) = (.*)\n\z/
-*/
 
+http://gitolite.com/gitolite/conf/index.html
+
+RW\+?C?D?M?|-|R - regex for permissions
+http://gitolite.com/gitolite/conf-2/#summary-of-permissions
+
+\n\s*(RW\+?C?D?M?|R|-)([^ ]*)(\S*)\s*=(.*)
+https://regex101.com/r/HKxH2e/4
 }
+https://regex101.com/r/HKxH2e/3
+*/
 
 //require_once 'vendor/autoload.php';
 $filename="../gitolite-admin/conf/gitolite.conf";
 
-$filename="gitolite.conf";
+//$filename="gitolite.conf";
 if (file_exists($filename))
 {
 $groups=array();
@@ -67,7 +75,10 @@ if ($handle) {
          //merge subgroups
          $groupsusers = array_merge($groupsusers,$subcolletctor);
 /// end of subgroups
-         $groupsusers=array_filter($groupsusers);//filter empty elements
+         $oldcount = count($groupsusers);
+         $groupsusers=array_unique($groupsusers);
+         if (count($groupsusers)!=$oldcount) echo "We cleaned from ".$oldcount." to ".count($groupsusers)." at ".$regresult[1];
+         //$groupsusers=array_filter($groupsusers);//filter empty elements
 
          $groups[$regresult[1]]= isset($groups[$regresult[1]])?array_merge($groups[$regresult[1]],$groupsusers):$groupsusers;
 
