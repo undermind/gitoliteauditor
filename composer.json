@@ -4,6 +4,10 @@
     "homepage": "https://github.com/undermind/gitoliteauditor",
     "type": "project",
     "license": "MIT",
+    "require": {
+        "php": "^5.0 || ^7.0"
+    },
+
     "authors": [
         {
             "name": "Undermind",
