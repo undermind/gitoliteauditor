@@ -2,15 +2,16 @@
 <?php
 
 //require_once 'vendor/autoload.php';
-$filename="../gitolite-admin/conf/gitolite.conf";
+$configfile="../gitolite-admin/conf/gitolite.conf";
+$keydir="../gitolite-admin/keydir/";
 
-//$filename="gitolite.conf";
-if (file_exists($filename))
+//$configfile="gitolite.conf";
+if (file_exists($configfile))
 {
 $groups=array();$groups["all"]=array("!EvErYbOdY!");
 $repos=array();
 $users=array();
-$handle = fopen($filename, "r");
+$handle = fopen($configfile, "r");
 if ($handle) {
     while (($line = fgets($handle)) !== false) {
       $line = explode("#",$line);
@@ -83,14 +84,30 @@ if ($handle) {
       }
     }
     fclose($handle);
+   
+   foreach($users as $usrid=>$user)
+   {
+    $keylist=glob($keydir.$usrid."*");
+    foreach ($keylist as $filename) {
+    //  echo $usrid."=>".$filename."\n";
+    }
+    if (count($keylist)>0)
+    $users[$usrid]["keys"]=$keylist;
+
+   }
+// oneline for users WO keyss
+//foreach($users as $usrname=>$usr) if (!isset($usr["keys"])) echo $usrname."\n";
+
    //print_r($groups);
    //
    //print_r($repos);
-   //print_r($users);
+   print_r($users);
 
    //print_r($repos["TestClone"]);
    //print_r($users["user.name"]);
-} else {
+
+   
+} else { die("Config file read error1");
 } }
 function ExplainList($list, $doclean=false, $info=null)
 {
@@ -144,8 +161,8 @@ else {
   print "task:".$task; print "\n";
 
 try {
-foreach (glob("./passwords/*.txt") as $filename) {
-    if (!empty($_GET['debug'])) echo "\nLoading ".$filename."...<br/>";
+foreach (glob("./passwords/*.txt") as $configfile) {
+    if (!empty($_GET['debug'])) echo "\nLoading ".$configfile."...<br/>";
 }
 
 
