@@ -67,12 +67,27 @@ if ($handle) {
 
           foreach($ruletarget as $usr)
           { 
-             //echo "user ".$usr." has ".$rule.(!empty($ruleext)?" (".$ruleext.")":"")."@ ".$currentrepo."\n";
-             $usrrul = array($currentrepo=>(empty($ruleext)?$rule:array($ruleext=>$rule)));
-             $users[$usr]= isset($users[$usr])? array_merge($users[$usr],$usrrul):$usrrul;
+             //if (!empty($ruleext)) echo "user ".$usr." has ".$rule.(!empty($ruleext)?" (".$ruleext.")":"")."@ ".$currentrepo."\n";
+             //$usrrul = array($currentrepo=>(empty($ruleext)?$rule:array($ruleext=>$rule)));
+//             $usrrul = array($currentrepo=>(empty($ruleext)?array("@"=>$rule):array($ruleext=>$rule)));
+//             $usrrul = array($currentrepo=>(empty($ruleext)?array("@"=>$rule):array($ruleext=>$rule)));
+             $usrrul = array((empty($ruleext)?$currentrepo:$currentrepo."@".$ruleext)=>$rule);
+             //$usrrul[$currentrepo] = array_filter ($usrrul[$currentrepo]);
+             $users[$usr]= isset($users[$usr])? array_merge_recursive($users[$usr],$usrrul):$usrrul;
+             //$users[$usr] = array_unique($users[$usr]);
+             //if (!empty($ruleext)) print_r($usrrul);
+             //if (!empty($ruleext)) print_r($users[$usr]);
 
+//idiotten check
+             if (is_array($users[$usr][(empty($ruleext)?$currentrepo:$currentrepo."@".$ruleext)]))
+             {
+echo (empty($ruleext)?$currentrepo:$currentrepo."@".$ruleext)."\n";
+//$users[$usr][(empty($ruleext)?$currentrepo:$currentrepo."@".$ruleext)] = array_unique( $users[$usr][(empty($ruleext)?$currentrepo:$currentrepo."@".$ruleext)]);
+             }
+             /*
+*/
+//end of idiotten check
           }
-
           if (!empty($ruleext)) $ruletarget=array($ruleext=>$ruletarget);
           //print_r($ruletarget);
           
@@ -96,17 +111,34 @@ if ($handle) {
 
    }
 // oneline for users WO keyss
-foreach($users as $usrname=>$usr) if (!isset($usr["keys"])) {echo $usrname."\n";print_r($users[$usrname]);}
+// foreach($users as $usrname=>$usr) if (!isset($usr["keys"])) {echo $usrname."\n";print_r($users[$usrname]);}
 
+ksort($users); ksort($repos);
    //print_r($groups);
    //
-   //print_r($repos);
-   //print_r($users);
+  print_r($repos);
+  // print_r($users);
 
    //print_r($repos["TestClone"]);
    //print_r($users["user.name"]);
-
    
+   /*
+echo '<!DOCTYPE html><html><head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>GIToLITE MATRIX</title></head><body><center>';
+echo "<table border=1>\n";
+echo "<tr><td>*</td>";
+$matrix=array();
+  foreach($users as $usrname=>$usr)
+  {
+    $matrix[$usrname]=array();
+    foreach($repos as $repoid=>$repodata)
+    { 
+    //echo "<td>".$repoid."</td>";
+    $matrix[$usrname][$repoid]=
+   
+    }
+  }
+   */
 } else { die("Config file read error1");
 } }
 function ExplainList($list, $doclean=false, $info=null)
@@ -143,6 +175,8 @@ function ExplainList($list, $doclean=false, $info=null)
  return $listusers;
 
 }
+
+
 
 /*
 if (PHP_SAPI === 'cli') {
