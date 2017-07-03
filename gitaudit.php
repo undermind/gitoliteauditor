@@ -96,12 +96,12 @@ if ($handle) {
 
    }
 // oneline for users WO keyss
-//foreach($users as $usrname=>$usr) if (!isset($usr["keys"])) echo $usrname."\n";
+foreach($users as $usrname=>$usr) if (!isset($usr["keys"])) {echo $usrname."\n";print_r($users[$usrname]);}
 
    //print_r($groups);
    //
    //print_r($repos);
-   print_r($users);
+   //print_r($users);
 
    //print_r($repos["TestClone"]);
    //print_r($users["user.name"]);
