@@ -160,7 +160,7 @@ echo "<table border=1 class='table'>\n";
 echo "<thead><tr><th>user</th><th><div class=\"verticalText\">Keys</div></th>";foreach($repoheaders as $header) echo "<th><div class=\"verticalText\">".$header."</div></th>";echo "</tr></thead>\n";
   foreach($users as $usrname=>$usr)
   {
-    echo "<tr><td>".$usrname."</td><td>".(isset($usr["keys"])?count($usr["keys"]):"")."</td>";
+    echo "<tr><td>".$usrname."</td>".(isset($usr["keys"])?"<td>".count($usr["keys"]):"<td bgcolor=\"gray\">")."</td>";
     foreach($repoheaders as $header)
     { 
       echo (isset($usr[$header])?"<td>".(is_array($usr[$header])?implode("\n",$usr[$header]):$usr[$header]):"<td bgcolor=\"gray\">")."</td>";
