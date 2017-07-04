@@ -3,12 +3,12 @@
 //require_once 'vendor/autoload.php';
 $configfile=".gitolite.conf";
 $keydir=".keydir/";
+
 //$configfile="gitolite.conf";
 if (file_exists($configfile))
 {
 $groups=array();$groups["all"]=array("!EvErYbOdY!");
 $repos=array();
- $repoheaders=array();
 $users=array();
 $handle = fopen($configfile, "r");
 if ($handle) {
@@ -60,7 +60,6 @@ if ($handle) {
           $ruleext=trim($regresult[2]);
           $ruletarget=trim($regresult[3]);
           //echo "Rule for repo ".$currentrepo." => ".$rule." (".$ruleext.") -> ".$ruletarget." \n";
-          $repoheaders=array_merge($repoheaders,array(empty($ruleext)?$currentrepo:$currentrepo."@".$ruleext));
           $ruletarget=ExplainList(trim($regresult[3]),true,$currentrepo);
           
           $ruletarget=array_filter($ruletarget);
@@ -110,16 +109,18 @@ echo (empty($ruleext)?$currentrepo:$currentrepo."@".$ruleext)."\n";
 // oneline for users WO keyss
 // foreach($users as $usrname=>$usr) if (!isset($usr["keys"])) {echo $usrname."\n";print_r($users[$usrname]);}
 
-ksort($users); ksort($repos);sort($repoheaders);$repoheaders=array_unique($repoheaders);
+ksort($users); ksort($repos);
    //print_r($groups);
    //
   // print_r($repos);
-  //  print_r($repoheaders);
   // print_r($users);
 
    //print_r($repos["TestClone"]);
    //print_r($users["user.name"]);
    
+//foreach($repos as $repid=>$repdat){ echo $repid."=>".print_r(CountOfSubreps($repdat),true)."\n";}
+   
+
 echo '<!DOCTYPE html><html><head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <title>GIToLITE MATRIX</title>';
 //echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>';
@@ -155,21 +156,61 @@ echo '<style>
             };
         </style></head><body><center>';
 echo "<table border=1 class='table'>\n";
-echo "<thead><tr><th>user</th><th><div class=\"verticalText\">Keys</div></th>";foreach($repoheaders as $header) echo "<th><div class=\"verticalText\">".$header."</div></th>";echo "</tr></thead>\n";
-  foreach($users as $usrname=>$usr)
+echo "<thead><tr><th>Repo-&gt;</th><th rowspan=\"2\"><div>Keys</div></th>";$secondrow="";
+foreach($repos as $header=>$repdat) 
+{
+ $c=CountOfSubreps($repdat);
+ if ($c)
+ {
+   echo "<th colspan=\"".(count($c)+1)."\">".$header."</th>";
+   $secondrow.="<th><div class=\"verticalText\">".$header."</div></th>";
+   foreach($c as $h) $secondrow.="<th><div class=\"verticalText\">".$h."</div></th>";
+ }
+ else echo "<th rowspan=\"2\"><div class=\"verticalText\">".$header."</div></th>";
+ 
+}
+echo "</tr><tr><th>User</th>".$secondrow."</tr></thead>\n";
+//$secondrow="";
+
+foreach($users as $usrname=>$usr)
   {
     echo "<tr><td>".$usrname."</td>".(isset($usr["keys"])?"<td>".count($usr["keys"]):"<td bgcolor=\"gray\">")."</td>";
-    foreach($repoheaders as $header)
-    { 
-      echo (isset($usr[$header])?"<td>".(is_array($usr[$header])?implode("\n",$usr[$header]):$usr[$header]):"<td bgcolor=\"gray\">")."</td>";
-    }
+
+foreach($repos as $header=>$repdat) 
+{
+ $c=CountOfSubreps($repdat);
+ if ($c)
+ {
+   echo (isset($usr[$header])?"<td>".(is_array($usr[$header])?implode("\n",$usr[$header]):$usr[$header]):"<td bgcolor=\"gray\">")."</td>";
+   foreach($c as $h) 
+     echo (isset($usr[$header."@".$h])?"<td>".(is_array($usr[$header."@".$h])?implode("\n",$usr[$header."@".$h]):$usr[$header."@".$h]):"<td bgcolor=\"gray\">")."</td>";
+
+ }
+ else 
+     echo (isset($usr[$header])?"<td>".(is_array($usr[$header])?implode("\n",$usr[$header]):$usr[$header]):"<td bgcolor=\"gray\">")."</td>";
+ 
+}
     echo "</tr>\n";
   }
   echo "</table><script>$('table').floatThead({ position: 'absolute'});</script></body></html>";
 
-   
+
+//end of matrix   
 } else { die("Config file read error1");
 } }
+
+function CountOfSubreps($rep)
+{
+$c=0;
+$subs=array();
+foreach($rep as $repd)
+{
+ foreach($repd as $subid=>$reprule) if (is_array($reprule)) {$c++;$subs[]=$subid;}
+}
+return $c?$subs:null;
+}
+
+
 function ExplainList($list, $doclean=false, $info=null)
 {
  $listusers=explode(" ",$list);
