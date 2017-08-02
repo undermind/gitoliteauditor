@@ -7,7 +7,7 @@ $keydir=".keydir/";
 //$configfile="gitolite.conf";
 if (file_exists($configfile))
 {
-$groups=array();$groups["all"]=array("!EvErYbOdY!");
+$groups=array();$groups["all"]=array("!Evryone!");
 $repos=array();
 $users=array();
 $handle = fopen($configfile, "r");
@@ -156,7 +156,7 @@ echo '<!DOCTYPE html><html><head> <meta charset="utf-8"> <meta name="viewport" c
 echo '</head><body><center>';
 echo "<table border=1 class='table'>\n";
 echo "<thead><tr><th>GIT Repository:</th><th>Group within Git Repository</th><th>Rights (R - read; W - write; + - enforce)</th><th>User Name:</th><th>Comments</th></tr></thead>\n";
-$bgs=array(0=>"bgcolor=\"light gray\"",1=>"bgcolor=\"white\"");$bgi=0;
+$bgs=array(0=>"bgcolor=\"#CCCCCC\"",1=>"bgcolor=\"white\"");$bgi=0;
 foreach($repos as $header=>$repdat) 
 {
   foreach($repdat as $rule=>$ruledat)

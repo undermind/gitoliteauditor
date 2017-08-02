@@ -113,8 +113,8 @@ echo (empty($ruleext)?$currentrepo:$currentrepo."@".$ruleext)."\n";
 ksort($users); ksort($repos);
    //print_r($groups);
    //
-   print_r($repos);
-  // print_r($users);
+   //print_r($repos);
+   // print_r($users);
    
    //print_r($repos["TestClone"]);
    //print_r($users["user.name"]);
