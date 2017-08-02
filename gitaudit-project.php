@@ -121,12 +121,11 @@ ksort($users); ksort($repos);
 //foreach($repos as $repid=>$repdat){ echo $repid."=>".print_r(CountOfSubreps($repdat),true)."\n";}
    
 
-echo '<!DOCTYPE html><html><head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<title>GIToLITE MATRIX</title>';
-
+echo '<!DOCTYPE html><html><head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta http-equiv="content-type" content="text/html; charset=utf-8"><title>GIToLITE MATRIX</title>';
+/*
 //echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>';
 //echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.0.3/jquery.floatThead.min.js" integrity="sha256-2Uhne1l42Oh0kPdYdDpIYx+mSMQO/HGOjZFEsBjQntY=" crossorigin="anonymous"></script>';
-
+*/
 /*echo '<style>
             th
             {
@@ -157,60 +156,31 @@ echo '<!DOCTYPE html><html><head> <meta charset="utf-8"> <meta name="viewport" c
 echo '</head><body><center>';
 echo "<table border=1 class='table'>\n";
 echo "<thead><tr><th>GIT Repository:</th><th>Group within Git Repository</th><th>Rights (R - read; W - write; + - enforce)</th><th>User Name:</th><th>Comments</th></tr></thead>\n";
-
-$secondrow="";
+$bgs=array(0=>"bgcolor=\"light gray\"",1=>"bgcolor=\"white\"");$bgi=0;
 foreach($repos as $header=>$repdat) 
 {
- $c=CountOfSubreps($repdat);
- if ($c)
- {
-   echo "<th colspan=\"".(count($c)+1)."\">".$header."</th>";
-   $secondrow.="<th><div class=\"verticalText\">".$header."</div></th>";
-   foreach($c as $h) $secondrow.="<th><div class=\"verticalText\">".$h."</div></th>";
- }
- else echo "<th rowspan=\"2\"><div class=\"verticalText\">".$header."</div></th>";
- 
-}
-echo "</tr><tr><th>User</th>".$secondrow."</tr></thead>\n";
-//$secondrow="";
-
-foreach($users as $usrname=>$usr)
+  foreach($repdat as $rule=>$ruledat)
   {
-    echo "<tr><td>".$usrname."</td>".(isset($usr["keys"])?"<td>".count($usr["keys"]):"<td bgcolor=\"gray\">")."</td>";
-
-foreach($repos as $header=>$repdat) 
-{
- $c=CountOfSubreps($repdat);
- if ($c)
- {
-   echo (isset($usr[$header])?"<td>".(is_array($usr[$header])?implode("\n",$usr[$header]):$usr[$header]):"<td bgcolor=\"gray\">")."</td>";
-   foreach($c as $h) 
-     echo (isset($usr[$header."@".$h])?"<td>".(is_array($usr[$header."@".$h])?implode("\n",$usr[$header."@".$h]):$usr[$header."@".$h]):"<td bgcolor=\"gray\">")."</td>";
-
- }
- else 
-     echo (isset($usr[$header])?"<td>".(is_array($usr[$header])?implode("\n",$usr[$header]):$usr[$header]):"<td bgcolor=\"gray\">")."</td>";
+    foreach($ruledat as $subrep=>$subrepdat)
+      if (is_array($subrepdat))
+      {
+        foreach($subrepdat as $subuserid=>$subuser)
+          echo "<tr ".$bgs[($bgi)%2]."><td>".$header."</td><td>".$subrep."</td><td>".$rule."</td><td>".$subuser."</td><td>".((isset($users[$subuser]["keys"]))?"":"Has not acctivated")."</td></tr>\n";
+          //count($users[$subuser]["keys"])
+      } else
+      echo "<tr ".$bgs[($bgi)%2]."><td colspan=2>".$header."</td><td>".$rule."</td><td>".$subrepdat."</td><td>".((isset($users[$subrepdat]["keys"]))?"":"Has not acctivated")."</td></tr>\n";
+      //count($users[$subrepdat]["keys"])
+   
+  }
+  $bgi++;
  
 }
-    echo "</tr>\n";
-  }
-  echo "</table><script>$('table').floatThead({ position: 'absolute'});</script></body></html>";
 
+  echo "</table></body></html>";
 
 //end of matrix   
 } else { die("Config file read error1");
 } }
-
-function CountOfSubreps($rep)
-{
-$c=0;
-$subs=array();
-foreach($rep as $repd)
-{
- foreach($repd as $subid=>$reprule) if (is_array($reprule)) {$c++;$subs[]=$subid;}
-}
-return $c?$subs:null;
-}
 
 
 function ExplainList($list, $doclean=false, $info=null)
