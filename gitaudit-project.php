@@ -1,9 +1,8 @@
-#!/usr/bin/php
 <?php
 
 //require_once 'vendor/autoload.php';
-$configfile="../gitolite-admin/conf/gitolite.conf";
-$keydir="../gitolite-admin/keydir/";
+$configfile=".gitolite.conf";
+$keydir=".keydir/";
 
 //$configfile="gitolite.conf";
 if (file_exists($configfile))
@@ -113,16 +112,105 @@ echo (empty($ruleext)?$currentrepo:$currentrepo."@".$ruleext)."\n";
 ksort($users); ksort($repos);
    //print_r($groups);
    //
-   print_r($repos);
+  // print_r($repos);
   // print_r($users);
-   
+
    //print_r($repos["TestClone"]);
    //print_r($users["user.name"]);
    
-      
+//foreach($repos as $repid=>$repdat){ echo $repid."=>".print_r(CountOfSubreps($repdat),true)."\n";}
+   
+
+echo '<!DOCTYPE html><html><head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>GIToLITE MATRIX</title>';
+
+//echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js"></script>';
+//echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.0.3/jquery.floatThead.min.js" integrity="sha256-2Uhne1l42Oh0kPdYdDpIYx+mSMQO/HGOjZFEsBjQntY=" crossorigin="anonymous"></script>';
+
+/*echo '<style>
+            th
+            {
+                background-color: grey;
+                color: white;
+                text-align: center;
+                vertical-align: bottom;
+                height: 150px;
+                padding-bottom: 3px;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+
+            .verticalText
+            {
+                text-align: center;
+                vertical-align: middle;
+                width: 20px;
+                margin: 0px;
+                padding: 0px;
+                padding-left: 3px;
+                padding-right: 3px;
+                padding-top: 10px;
+                white-space: nowrap;
+                -webkit-transform: rotate(-90deg); 
+                -moz-transform: rotate(-90deg);                 
+            };</style>';*/
+echo '</head><body><center>';
+echo "<table border=1 class='table'>\n";
+echo "<thead><tr><th>GIT Repository:</th><th>Group within Git Repository</th><th>Rights (R - read; W - write; + - enforce)</th><th>User Name:</th><th>Comments</th></tr></thead>\n";
+
+$secondrow="";
+foreach($repos as $header=>$repdat) 
+{
+ $c=CountOfSubreps($repdat);
+ if ($c)
+ {
+   echo "<th colspan=\"".(count($c)+1)."\">".$header."</th>";
+   $secondrow.="<th><div class=\"verticalText\">".$header."</div></th>";
+   foreach($c as $h) $secondrow.="<th><div class=\"verticalText\">".$h."</div></th>";
+ }
+ else echo "<th rowspan=\"2\"><div class=\"verticalText\">".$header."</div></th>";
+ 
+}
+echo "</tr><tr><th>User</th>".$secondrow."</tr></thead>\n";
+//$secondrow="";
+
+foreach($users as $usrname=>$usr)
+  {
+    echo "<tr><td>".$usrname."</td>".(isset($usr["keys"])?"<td>".count($usr["keys"]):"<td bgcolor=\"gray\">")."</td>";
+
+foreach($repos as $header=>$repdat) 
+{
+ $c=CountOfSubreps($repdat);
+ if ($c)
+ {
+   echo (isset($usr[$header])?"<td>".(is_array($usr[$header])?implode("\n",$usr[$header]):$usr[$header]):"<td bgcolor=\"gray\">")."</td>";
+   foreach($c as $h) 
+     echo (isset($usr[$header."@".$h])?"<td>".(is_array($usr[$header."@".$h])?implode("\n",$usr[$header."@".$h]):$usr[$header."@".$h]):"<td bgcolor=\"gray\">")."</td>";
+
+ }
+ else 
+     echo (isset($usr[$header])?"<td>".(is_array($usr[$header])?implode("\n",$usr[$header]):$usr[$header]):"<td bgcolor=\"gray\">")."</td>";
+ 
+}
+    echo "</tr>\n";
+  }
+  echo "</table><script>$('table').floatThead({ position: 'absolute'});</script></body></html>";
+
+
+//end of matrix   
 } else { die("Config file read error1");
 } }
 
+function CountOfSubreps($rep)
+{
+$c=0;
+$subs=array();
+foreach($rep as $repd)
+{
+ foreach($repd as $subid=>$reprule) if (is_array($reprule)) {$c++;$subs[]=$subid;}
+}
+return $c?$subs:null;
+}
 
 
 function ExplainList($list, $doclean=false, $info=null)
@@ -160,30 +248,4 @@ function ExplainList($list, $doclean=false, $info=null)
 
 }
 
-
-
-/*
-if (PHP_SAPI === 'cli') {
-    $name = $argv[1];
-    $mail = $argv[2];
-    $task = $argv[3];
-}
-else {
-    $name = $_GET['name'];
-    $mail = $_GET['mail'];
-    $task = $_GET['task'];
-}
- $task = preg_replace('/\D/', '', $task );
-  print "name:".$name; print "\n";
-  print "mail:".$mail; print "\n";
-  print "task:".$task; print "\n";
-
-try {
-foreach (glob("./passwords/*.txt") as $configfile) {
-    if (!empty($_GET['debug'])) echo "\nLoading ".$configfile."...<br/>";
-}
-
-
-} catch (Exception $e) {    echo 'Exception: ',  $e->getMessage(), "\n";}
-*/
 ?>
