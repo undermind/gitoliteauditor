@@ -107,18 +107,17 @@ echo (empty($ruleext)?$currentrepo:$currentrepo."@".$ruleext)."\n";
     $users[$usrid]["keys"]=$keylist;
 
    }
-// oneline for users WO keyss
-// foreach($users as $usrname=>$usr) if (!isset($usr["keys"])) {echo $usrname."\n";print_r($users[$usrname]);}
 
 ksort($users); ksort($repos);
    //print_r($groups);
    //
-   //print_r($repos);
+ //  print_r($repos);
    // print_r($users);
+//  users WO keyss
+ // foreach($users as $usrname=>$usr) if (!isset($usr["keys"])) {echo $usrname."\n";print_r($users[$usrname]);}
    
-   //print_r($repos["TestClone"]);
+   //print_r($repos["repo"]);
    //print_r($users["user.name"]);
-   
       
 } else { die("Config file read error1");
 } }
