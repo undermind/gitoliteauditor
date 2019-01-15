@@ -15,9 +15,6 @@ $handle = fopen($configfile, "r");
 if ($handle) {
     while (($line = fgets($handle)) !== false) {
       $line = explode("#",$line);
-      if (isset($line[1])) 
-      {//echo "###".$line[1]; //comments
-      continue;}
       $line=$line[0];
       $line = trim ($line);
       //    if ($currentrepo==="bogus-repo")   { echo $line."\n";          } //show info about repo
